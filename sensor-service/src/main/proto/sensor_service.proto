@@ -17,7 +17,7 @@ service SensorService {
     };
   }
 
-  rpc retrieveSensorData(google.protobuf.StringValue) returns (Location) {
+  rpc findById(google.protobuf.StringValue) returns (Sensor) {
     option (google.api.http) = {
       get: "/v1/sensors/{value}"
     };
@@ -41,10 +41,10 @@ message SensorData {
 
 message Sensor {
 
-  string address = 1;
-  string state = 2;
-  string city = 3;
-  string zipCode = 4;
-
+  string device_id = 1;
+  string address = 2;
+  string state = 3;
+  string city = 4;
+  string zipCode = 5;
 
 }

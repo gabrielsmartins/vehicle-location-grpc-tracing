@@ -44,6 +44,7 @@ ext {
 	set('protobufVersion', "3.25.0")
 	set('annotationsApiVersion', "6.0.53")
 	set('googleApiVersion', "2.28.0")
+	set('logstashVersion', "7.4")
 }
 
 dependencies {
@@ -53,11 +54,7 @@ dependencies {
 
 	implementation "net.devh:grpc-server-spring-boot-starter:${springGrpcVersion}"
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
-
 
 	implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
@@ -72,11 +69,13 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
-	implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+	implementation 'io.micrometer:micrometer-tracing-bridge-otel'
 	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+	implementation "net.logstash.logback:logstash-logback-encoder:${logstashVersion}"
 
 	implementation 'io.grpc:grpc-auth'
 	implementation 'io.grpc:grpc-alts'

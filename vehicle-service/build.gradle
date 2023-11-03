@@ -72,7 +72,7 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
-	implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+	implementation 'io.micrometer:micrometer-tracing-bridge-otel'
 	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
