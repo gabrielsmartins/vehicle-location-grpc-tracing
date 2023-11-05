@@ -1,7 +1,7 @@
 package br.gasmartins.sensors.infra.persistence.adapter.mapper;
 
 import br.gasmartins.sensors.domain.SensorData;
-import br.gasmartins.sensors.domain.Location;
+import br.gasmartins.sensors.domain.Coordinates;
 import br.gasmartins.sensors.infra.persistence.entity.LocationEntity;
 import br.gasmartins.sensors.infra.persistence.entity.SensorDataEntity;
 import lombok.AccessLevel;
@@ -14,7 +14,7 @@ public class SensorPersistenceMapper {
         if (sensorData == null) {
             return null;
         }
-        var location = sensorData.getLocation();
+        var location = sensorData.getCoordinates();
         var latitude = location.getLatitude();
         var longitude = location.getLongitude();
         return SensorDataEntity.builder()
@@ -36,7 +36,7 @@ public class SensorPersistenceMapper {
         return SensorData.builder()
                          .withId(sensorDataEntity.getId())
                          .withVehicleId(sensorDataEntity.getVehicleId())
-                         .withLocation(new Location(latitude, longitude))
+                         .withCoordinates(new Coordinates(latitude, longitude))
                          .withOccurredOn(sensorDataEntity.getOccurredOn())
                          .withSpeed(sensorDataEntity.getSpeed())
                          .build();

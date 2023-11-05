@@ -10,21 +10,21 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 
 service SensorService {
-  rpc store(stream SensorData) returns (Sensor) {
+  rpc store(stream SensorData) returns (SensorData) {
     option (google.api.http) = {
       post : "/v1/sensors"
       body: "*"
     };
   }
 
-  rpc findById(google.protobuf.StringValue) returns (Sensor) {
+  rpc findById(google.protobuf.StringValue) returns (SensorData) {
     option (google.api.http) = {
       get: "/v1/sensors/{value}"
     };
   }
 }
 
-message Location {
+message Coordinates {
   float latitude = 1;
   float longitude = 2;
 }
@@ -33,18 +33,20 @@ message SensorData {
 
   string device_id = 1;
   string vehicle_id = 2;
-  Location location = 3;
+  Coordinates coordinates = 3;
   float speed = 4;
   google.protobuf.Timestamp occurredOn = 5;
+  optional Location location = 6;
 
 }
 
-message Sensor {
+message Location {
 
-  string device_id = 1;
-  string address = 2;
-  string state = 3;
-  string city = 4;
-  string zipCode = 5;
+  string country = 1;
+  string state = 2;
+  string city = 3;
+  string district = 4;
+  string address = 5;
+  string zipCode = 6;
 
 }

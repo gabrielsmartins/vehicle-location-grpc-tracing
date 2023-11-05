@@ -1,6 +1,6 @@
 package br.gasmartins.sensors.application.grpc;
 
-import br.gasmartins.grpc.sensors.Sensor;
+
 import br.gasmartins.grpc.sensors.SensorData;
 import br.gasmartins.grpc.sensors.SensorServiceGrpc;
 import br.gasmartins.sensors.domain.service.SensorService;
@@ -26,7 +26,7 @@ public class SensorGrpcController extends SensorServiceGrpc.SensorServiceImplBas
     @Timed(value = "sensor-create.time", description = "Time taken to store sensor data")
     @Counted(value = "sensor-create.time", description = "Number of requests to store sensor data")
     @Override
-    public StreamObserver<SensorData> store(StreamObserver<Sensor> responseObserver) {
+    public StreamObserver<SensorData> store(StreamObserver<SensorData> responseObserver) {
         log.info(append("data", responseObserver), "Storing sensor data");
         return new SensorDataStreamObserver(this.service, responseObserver);
     }
@@ -35,7 +35,7 @@ public class SensorGrpcController extends SensorServiceGrpc.SensorServiceImplBas
     @Timed(value = "sensor-search.time", description = "Time taken to return sensor data")
     @Counted(value = "sensor-search.time", description = "Number of requests return store sensor data")
     @Override
-    public void findById(StringValue id, StreamObserver<Sensor> responseObserver) {
+    public void findById(StringValue id, StreamObserver<SensorData> responseObserver) {
         log.info(append("id", id), "Storing sensor data");
         super.findById(id, responseObserver);
     }

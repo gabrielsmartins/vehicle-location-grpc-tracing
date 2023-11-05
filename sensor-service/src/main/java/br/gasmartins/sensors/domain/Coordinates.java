@@ -7,7 +7,7 @@ import lombok.*;
 @Builder(setterPrefix = "with")
 @Getter
 @Setter
-public class Location {
+public class Coordinates {
 
     private Float latitude;
     private Float longitude;

@@ -1,16 +1,15 @@
 package br.gasmartins.sensors.application.grpc;
 
-import br.gasmartins.grpc.sensors.Sensor;
-;
 import br.gasmartins.grpc.sensors.SensorData;
 import br.gasmartins.sensors.application.grpc.mapper.SensorGrpcMapper;
 import br.gasmartins.sensors.domain.service.SensorService;
-import br.gasmartins.sensors.infra.persistence.adapter.mapper.SensorPersistenceMapper;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import static net.logstash.logback.marker.Markers.append;
+
+;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -18,7 +17,7 @@ public class SensorDataStreamObserver implements StreamObserver<SensorData> {
 
     private final SensorService service;
     private br.gasmartins.sensors.domain.SensorData storedSensorData;
-    private final StreamObserver<Sensor> responseObserver;
+    private final StreamObserver<SensorData> responseObserver;
 
     @Override
     public void onNext(SensorData sensorDataDto) {
@@ -39,7 +38,10 @@ public class SensorDataStreamObserver implements StreamObserver<SensorData> {
 
     @Override
     public void onCompleted() {
-        this.responseObserver.onNext(this.storedSensorData);
+        log.info(append("sensor", this.storedSensorData), "Mapping stored sensor");
+        var storedSensorDataDto = SensorGrpcMapper.mapToDto(this.storedSensorData);
+        log.info(append("sensor", storedSensorDataDto), "Stored sensor was mapped successfully");
+        this.responseObserver.onNext(storedSensorDataDto);
         this.responseObserver.onCompleted();
     }
 
