@@ -1,1 +1,4 @@
+pluginManagement {
+    apply from: 'repositories.gradle', to: pluginManagement
+}
 rootProject.name = 'sensor-service'

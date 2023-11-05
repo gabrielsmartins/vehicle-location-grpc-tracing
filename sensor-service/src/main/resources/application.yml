@@ -13,13 +13,16 @@ spring:
 
 management:
   tracing:
+    enabled: true
     sampling:
       probability: 1.0
+  otlp:
+    tracing:
+      endpoint: http://localhost:4317
   endpoints:
     web:
       exposure:
-        include:
-          - '*'
+        include: '*'
   metrics:
     distribution:
       percentiles-histogram:
