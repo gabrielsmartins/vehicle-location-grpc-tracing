@@ -19,7 +19,7 @@ public class SensorGrpcMapper {
         var latitude = coordinates.getLatitude();
         var longitude = coordinates.getLongitude();
         return SensorData.builder()
-                         .withId(UUID.fromString(sensorDataDto.getDeviceId()))
+                         .withSensorId(UUID.fromString(sensorDataDto.getSensorId()))
                          .withVehicleId(UUID.fromString(sensorDataDto.getVehicleId()))
                          .withCoordinates(new Coordinates(latitude, longitude))
                          .withSpeed(sensorDataDto.getSpeed())
@@ -35,7 +35,7 @@ public class SensorGrpcMapper {
         var latitude = coordinates.getLatitude();
         var longitude = coordinates.getLongitude();
         return br.gasmartins.grpc.sensors.SensorData.newBuilder()
-                                         .setDeviceId(sensorData.toString())
+                                         .setSensorId(sensorData.getSensorId().toString())
                                          .setVehicleId(sensorData.getVehicleId().toString())
                                          .setCoordinates(br.gasmartins.grpc.sensors.Coordinates.newBuilder()
                                                  .setLatitude(latitude)

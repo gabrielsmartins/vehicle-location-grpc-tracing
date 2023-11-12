@@ -4,7 +4,6 @@ import br.gasmartins.sensors.domain.SensorData;
 import br.gasmartins.sensors.domain.exceptions.SensorNotFoundException;
 import br.gasmartins.sensors.domain.repository.SensorRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -22,6 +21,12 @@ public class SensorServiceImpl implements SensorService {
 
     @Override
     public SensorData findById(UUID id) {
+        return this.repository.findById(id)
+                              .orElseThrow(() -> new SensorNotFoundException(id));
+    }
+
+    @Override
+    public SensorData findByVehicleId(UUID vehicleId) {
         return this.repository.findById(id)
                               .orElseThrow(() -> new SensorNotFoundException(id));
     }

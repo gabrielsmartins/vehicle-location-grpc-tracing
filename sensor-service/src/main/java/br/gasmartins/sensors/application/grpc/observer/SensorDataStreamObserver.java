@@ -1,4 +1,4 @@
-package br.gasmartins.sensors.application.grpc;
+package br.gasmartins.sensors.application.grpc.observer;
 
 import br.gasmartins.grpc.sensors.SensorData;
 import br.gasmartins.sensors.application.grpc.mapper.SensorGrpcMapper;

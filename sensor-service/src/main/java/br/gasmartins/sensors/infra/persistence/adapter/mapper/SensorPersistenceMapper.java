@@ -18,7 +18,7 @@ public class SensorPersistenceMapper {
         var latitude = location.getLatitude();
         var longitude = location.getLongitude();
         return SensorDataEntity.builder()
-                               .withId(sensorData.getId())
+                               .withId(sensorData.getSensorId())
                                .withVehicleId(sensorData.getVehicleId())
                                .withLocation(new LocationEntity(latitude, longitude))
                                .withOccurredOn(sensorData.getOccurredOn())

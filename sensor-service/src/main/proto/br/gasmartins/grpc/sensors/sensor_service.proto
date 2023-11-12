@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package br.gasmartins.grpc.sensors;
+
+option java_package = "br.gasmartins.grpc.sensors";
+option java_multiple_files = true;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "br/gasmartins/grpc/common/pagination.proto";
+
+service SensorService {
+
+  rpc store(stream SensorData) returns (stream SensorData) {
+    option (google.api.http) = {
+      post : "/v1/sensors"
+      body: "*"
+    };
+  }
+
+  rpc findBySensorId(google.protobuf.StringValue) returns (SensorData) {
+    option (google.api.http) = {
+      get: "/v1/sensors/{sensor_id}"
+    };
+  }
+
+  rpc findBySensorVehicleId(SearchSensorDataByVehicleIdParam) returns (stream SensorDataPage) {
+    option (google.api.http) = {
+      get: "/v1/sensors?vehicle_id={vehicle_id}"
+    };
+  }
+
+}
+
+message SensorData {
+
+  string sensor_id = 1;
+  string vehicle_id = 2;
+  VehicleState vehicle_state = 3;
+  Coordinates coordinates = 4;
+  float speed = 5;
+  google.protobuf.Timestamp occurred_on = 6;
+  optional Location location = 7;
+
+}
+
+enum VehicleState {
+
+  MOVING = 0;
+  STOPPING = 1;
+  STOPPED = 2;
+
+}
+
+message Coordinates {
+  float latitude = 1;
+  float longitude = 2;
+}
+
+message Location {
+
+  string country = 1;
+  string state = 2;
+  string city = 3;
+  string district = 4;
+  string address = 5;
+  string zipCode = 6;
+
+}
+
+message SearchSensorDataByVehicleIdParam {
+  google.protobuf.StringValue vehicle_id = 1;
+  br.gasmartins.grpc.common.Pageable pageable = 2;
+}
+
+message SensorDataPage {
+  repeated SensorData data = 1;
+  google.protobuf.Timestamp start_occurred_on = 2;
+  google.protobuf.Timestamp end_occurred_on = 3;
+  br.gasmartins.grpc.common.Page page = 4;
+}
+

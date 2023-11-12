@@ -3,15 +3,18 @@ package br.gasmartins.sensors.application.grpc;
 
 import br.gasmartins.grpc.sensors.SensorData;
 import br.gasmartins.grpc.sensors.SensorServiceGrpc;
+import br.gasmartins.sensors.application.grpc.mapper.SensorGrpcMapper;
+import br.gasmartins.sensors.application.grpc.observer.SensorDataStreamObserver;
 import br.gasmartins.sensors.domain.service.SensorService;
 import com.google.protobuf.StringValue;
 import io.grpc.stub.StreamObserver;
 import io.micrometer.core.annotation.Counted;
 import io.micrometer.core.annotation.Timed;
-import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
+
+import java.util.UUID;
 
 import static net.logstash.logback.marker.Markers.append;
 
@@ -22,21 +25,43 @@ public class SensorGrpcController extends SensorServiceGrpc.SensorServiceImplBas
 
     private final SensorService service;
 
-    @Observed(name = "store", contextualName = "sensors")
-    @Timed(value = "sensor-create.time", description = "Time taken to store sensor data")
-    @Counted(value = "sensor-create.time", description = "Number of requests to store sensor data")
+    @Timed(value = "sensor-data-store.time", description = "Time taken to store sensor data")
+    @Counted(value = "sensor-data-store.count", description = "Number of requests to store sensor data")
     @Override
     public StreamObserver<SensorData> store(StreamObserver<SensorData> responseObserver) {
         log.info(append("data", responseObserver), "Storing sensor data");
         return new SensorDataStreamObserver(this.service, responseObserver);
     }
 
-    @Observed(name = "findById", contextualName = "sensors")
-    @Timed(value = "sensor-search.time", description = "Time taken to return sensor data")
-    @Counted(value = "sensor-search.time", description = "Number of requests return store sensor data")
+    @Timed(value = "sensor-data-by-sensor-id.time", description = "Time taken to return sensor data by sensor id")
+    @Counted(value = "sensor-data-by-sensor-id.count", description = "Number of requests to search sensor data by sensor id")
     @Override
-    public void findById(StringValue id, StreamObserver<SensorData> responseObserver) {
-        log.info(append("id", id), "Storing sensor data");
-        super.findById(id, responseObserver);
+    public void findBySensorId(StringValue sensorId, StreamObserver<SensorData> responseObserver) {
+        log.info(append("sensor_id", sensorId), "Searching sensor by id");
+        var sensorData = this.service.findById(UUID.fromString(sensorId.getValue()));
+        log.info(append("data", sensorData), "Sensor data was found successfully");
+
+        log.info(append("sensor", sensorData), "Mapping sensor data");
+        var sensorDataDto = SensorGrpcMapper.mapToDto(sensorData);
+        log.info(append("sensor", sensorDataDto), "Sensor was mapped successfully");
+
+        responseObserver.onNext(sensorDataDto);
+        responseObserver.onCompleted();
+    }
+
+    @Timed(value = "sensor-data-by-vehicle-id.time", description = "Time taken to return sensor data by vehicle id")
+    @Counted(value = "sensor-data-by-vehicle-id.count", description = "Number of requests to search sensor data by vehicle id")
+    @Override
+    public void findBySensorVehicleId(StringValue vehicleId, StreamObserver<SensorData> responseObserver) {
+        log.info(append("vehicle_id", vehicleId), "Searching sensor vehicle id");
+        var sensorData = this.service.findByVehicleId(UUID.fromString(vehicleId.getValue()));
+        log.info(append("data", sensorData), "Sensor data was found successfully");
+
+        log.info(append("sensor", sensorData), "Mapping sensor data");
+        var sensorDataDto = SensorGrpcMapper.mapToDto(sensorData);
+        log.info(append("sensor", sensorDataDto), "Sensor was mapped successfully");
+
+        responseObserver.onNext(sensorDataDto);
+        responseObserver.onCompleted();
     }
 }

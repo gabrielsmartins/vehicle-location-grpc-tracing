@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package br.gasmartins.grpc.common;
+
+option java_package = "br.gasmartins.grpc.common";
+option java_multiple_files = true;
+
+message Pageable {
+  uint32 page = 1;
+  uint32 page_size = 2;
+}
+
+message Page {
+  uint32 page = 2;
+  uint32 page_size = 3;
+  uint32 total_pages = 4;
+  uint32 total_elements = 5;
+  bool first = 6;
+  bool last = 7;
+  bool has_previous = 8;
+  bool has_next = 9;
+}
