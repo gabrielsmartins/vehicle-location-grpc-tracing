@@ -25,9 +25,9 @@ service SensorService {
     };
   }
 
-  rpc findBySensorVehicleId(SearchSensorDataByVehicleIdParam) returns (stream SensorDataPage) {
+  rpc findByVehicleIdAndOccurredOnBetween(stream SearchSensorDataByVehicleIdParam) returns (stream SensorDataPage) {
     option (google.api.http) = {
-      get: "/v1/sensors?vehicle_id={vehicle_id}"
+      get: "/v1/sensors?vehicle_id={vehicle_id}&start_occurred_on={start_occurred_on}&end_occurred_on={end_occurred_on}"
     };
   }
 
@@ -71,13 +71,13 @@ message Location {
 
 message SearchSensorDataByVehicleIdParam {
   google.protobuf.StringValue vehicle_id = 1;
-  br.gasmartins.grpc.common.Pageable pageable = 2;
+  google.protobuf.Timestamp start_occurred_on = 2;
+  google.protobuf.Timestamp end_occurred_on = 3;
+  br.gasmartins.grpc.common.Pageable pageable = 4;
 }
 
 message SensorDataPage {
   repeated SensorData data = 1;
-  google.protobuf.Timestamp start_occurred_on = 2;
-  google.protobuf.Timestamp end_occurred_on = 3;
   br.gasmartins.grpc.common.Page page = 4;
 }
 

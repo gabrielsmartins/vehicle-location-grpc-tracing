@@ -1,4 +1,4 @@
-package br.gasmartins.sensors.application.grpc.observer;
+package br.gasmartins.sensors.application.grpc.observer.out;
 
 import br.gasmartins.grpc.sensors.SensorData;
 import br.gasmartins.sensors.application.grpc.mapper.SensorGrpcMapper;
@@ -16,8 +16,10 @@ import static net.logstash.logback.marker.Markers.append;
 public class SensorDataStreamObserver implements StreamObserver<SensorData> {
 
     private final SensorService service;
-    private br.gasmartins.sensors.domain.SensorData storedSensorData;
+
     private final StreamObserver<SensorData> responseObserver;
+
+    private br.gasmartins.sensors.domain.SensorData storedSensorData;
 
     @Override
     public void onNext(SensorData sensorDataDto) {

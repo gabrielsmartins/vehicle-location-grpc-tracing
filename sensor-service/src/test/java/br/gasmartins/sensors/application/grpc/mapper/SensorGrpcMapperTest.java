@@ -18,9 +18,10 @@ class SensorGrpcMapperTest {
         var sensorData = SensorGrpcMapper.mapToDomain(sensorDataDto);
 
         assertThat(sensorData).isNotNull();
-        assertThat(sensorData).hasNoNullFieldsOrPropertiesExcept("location");
+        assertThat(sensorData).hasNoNullFieldsOrProperties();
         assertThat(sensorData.getSensorId().toString()).isEqualTo(sensorDataDto.getSensorId());
         assertThat(sensorData.getVehicleId().toString()).isEqualTo(sensorDataDto.getVehicleId());
+        assertThat(sensorData.getVehicleState().name()).isEqualTo(sensorDataDto.getVehicleState().name());
         assertThat(sensorData.getSpeed()).isEqualTo(sensorDataDto.getSpeed());
         assertThat(sensorData.getOccurredOn()).isEqualTo(TimestampGrpcMapper.toLocalDatetime(sensorDataDto.getOccurredOn()));
         assertThat(sensorData.getCoordinates().getLatitude()).isEqualTo(sensorDataDto.getCoordinates().getLatitude());
@@ -33,9 +34,10 @@ class SensorGrpcMapperTest {
         var sensorData = defaultSensorData().build();
         var sensorDataDto = SensorGrpcMapper.mapToDto(sensorData);
 
-        assertThat(sensorDataDto).hasNoNullFieldsOrPropertiesExcept("location");
+        assertThat(sensorDataDto).hasNoNullFieldsOrProperties();
         assertThat(sensorDataDto.getSensorId()).isEqualTo(sensorData.getSensorId().toString());
         assertThat(sensorDataDto.getVehicleId()).isEqualTo(sensorData.getVehicleId().toString());
+        assertThat(sensorDataDto.getVehicleState().name()).isEqualTo(sensorData.getVehicleState().name());
         assertThat(sensorDataDto.getSpeed()).isEqualTo(sensorData.getSpeed());
         assertThat(sensorDataDto.getOccurredOn()).isEqualTo(TimestampGrpcMapper.toTimestamp(sensorData.getOccurredOn()));
         assertThat(sensorDataDto.getCoordinates().getLatitude()).isEqualTo(sensorData.getCoordinates().getLatitude());

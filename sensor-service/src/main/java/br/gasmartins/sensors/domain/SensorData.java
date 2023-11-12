@@ -16,7 +16,7 @@ public class SensorData {
 
     private UUID sensorId;
     private UUID vehicleId;
-    private VehicleState state;
+    private VehicleState vehicleState;
     private Coordinates coordinates;
     private Float speed;
     private LocalDateTime occurredOn;

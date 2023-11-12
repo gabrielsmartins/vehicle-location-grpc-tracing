@@ -1,8 +1,6 @@
 package br.gasmartins.sensors.infra.persistence.entity;
 
 import lombok.*;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -11,11 +9,11 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 @Setter
 public class LocationEntity {
 
-    @Field(name = "latitude", type = FieldType.Double)
-    private Float latitude;
-
-    @Field(name = "longitude", type = FieldType.Double)
-    private Float longitude;
-
+    private String country;
+    private String state;
+    private String city;
+    private String district;
+    private String address;
+    private String zipCode;
 
 }

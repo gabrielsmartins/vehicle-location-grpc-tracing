@@ -1,10 +1,13 @@
 package br.gasmartins.sensors.application.grpc;
 
 
+import br.gasmartins.grpc.sensors.SearchSensorDataByVehicleIdParam;
 import br.gasmartins.grpc.sensors.SensorData;
+import br.gasmartins.grpc.sensors.SensorDataPage;
 import br.gasmartins.grpc.sensors.SensorServiceGrpc;
 import br.gasmartins.sensors.application.grpc.mapper.SensorGrpcMapper;
-import br.gasmartins.sensors.application.grpc.observer.SensorDataStreamObserver;
+import br.gasmartins.sensors.application.grpc.observer.in.SearchSensorDataByVehicleIdParamStreamObserver;
+import br.gasmartins.sensors.application.grpc.observer.out.SensorDataStreamObserver;
 import br.gasmartins.sensors.domain.service.SensorService;
 import com.google.protobuf.StringValue;
 import io.grpc.stub.StreamObserver;
@@ -52,16 +55,8 @@ public class SensorGrpcController extends SensorServiceGrpc.SensorServiceImplBas
     @Timed(value = "sensor-data-by-vehicle-id.time", description = "Time taken to return sensor data by vehicle id")
     @Counted(value = "sensor-data-by-vehicle-id.count", description = "Number of requests to search sensor data by vehicle id")
     @Override
-    public void findBySensorVehicleId(StringValue vehicleId, StreamObserver<SensorData> responseObserver) {
-        log.info(append("vehicle_id", vehicleId), "Searching sensor vehicle id");
-        var sensorData = this.service.findByVehicleId(UUID.fromString(vehicleId.getValue()));
-        log.info(append("data", sensorData), "Sensor data was found successfully");
-
-        log.info(append("sensor", sensorData), "Mapping sensor data");
-        var sensorDataDto = SensorGrpcMapper.mapToDto(sensorData);
-        log.info(append("sensor", sensorDataDto), "Sensor was mapped successfully");
-
-        responseObserver.onNext(sensorDataDto);
-        responseObserver.onCompleted();
+    public StreamObserver<SearchSensorDataByVehicleIdParam> findByVehicleIdAndOccurredOnBetween(StreamObserver<SensorDataPage> responseObserver) {
+        return new SearchSensorDataByVehicleIdParamStreamObserver(this.service, responseObserver);
     }
+
 }

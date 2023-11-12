@@ -17,7 +17,7 @@ public enum VehicleState {
     @JsonValue
     private final String description;
 
-    public final VehicleState fromDescription(String description) {
+    public static VehicleState fromDescription(String description) {
         return Stream.of(VehicleState.values())
                      .filter(vehicleState -> vehicleState.getDescription().equals(description))
                      .findFirst()

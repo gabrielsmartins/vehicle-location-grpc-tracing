@@ -3,13 +3,17 @@ server:
 
 grpc:
   server:
-    port: 8081
+    port: 8087
 
 spring:
   application:
     name: sensor-service
   main:
     allow-bean-definition-overriding: true
+  data:
+    elasticsearch:
+      repositories:
+        enabled: true
 
 management:
   tracing:

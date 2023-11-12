@@ -26,7 +26,7 @@ public class SpanConfiguration {
 
     @Bean
     public SpanAspect spanAspect(MethodInvocationProcessor methodInvocationProcessor) {
-        return new SpanAspect(methodInvocationProcessor)
+        return new SpanAspect(methodInvocationProcessor);
     }
 
     @Bean

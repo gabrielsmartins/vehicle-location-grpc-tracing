@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Repository
-public interface SensorElasticSearchRepository extends ElasticsearchRepository<SensorDataEntity, UUID> {
+public interface SensorDataElasticSearchRepository extends ElasticsearchRepository<SensorDataEntity, UUID> {
 
     Page<SensorDataEntity> findByVehicleIdAndOccurredOnBetween(UUID vehicleId, LocalDateTime startOccurredOn, LocalDateTime endOccurredOn, Pageable pageable);
 

@@ -1,5 +1,6 @@
 package br.gasmartins.sensors.infra.persistence.entity;
 
+import br.gasmartins.sensors.domain.enums.VehicleState;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
@@ -20,19 +21,25 @@ import java.util.UUID;
 public class SensorDataEntity {
 
     @Id
-    @Field(name = "device_id", type = FieldType.Text)
-    private UUID id;
+    @Field(name = "sensor_id", type = FieldType.Text)
+    private UUID sensorId;
 
     @Field(name = "vehicle_id", type = FieldType.Text)
     private UUID vehicleId;
 
-    @Field(name = "location", type = FieldType.Nested)
-    private LocationEntity location;
+    @Field(name = "vehicle_state", type = FieldType.Text)
+    private VehicleState vehicleState;
+
+    @Field(name = "coordinates", type = FieldType.Nested)
+    private CoordinatesEntity coordinates;
 
     @Field(name = "speed", type = FieldType.Float)
     private Float speed;
 
     @Field(name = "occurredOn", type = FieldType.Date_Nanos)
     private LocalDateTime occurredOn;
+
+    @Field(name = "location", type = FieldType.Nested)
+    private LocationEntity location;
 
 }
