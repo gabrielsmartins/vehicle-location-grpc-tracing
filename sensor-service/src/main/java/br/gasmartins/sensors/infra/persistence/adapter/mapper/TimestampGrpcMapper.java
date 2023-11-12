@@ -20,7 +20,7 @@ public class TimestampGrpcMapper {
 
     public static LocalDateTime toLocalDatetime(Timestamp timestamp) {
         return Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos())
-                      .atZone(ZoneOffset.systemDefault())
+                      .atOffset(ZoneOffset.UTC)
                       .toLocalDateTime();
     }
 

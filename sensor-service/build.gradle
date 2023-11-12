@@ -47,6 +47,7 @@ ext {
 	set('otelGrpcVersion', "1.31.0-alpha")
 	set('otelLogsVersion', "1.26.0-alpha")
 	set('instancioVersion', "3.5.1")
+	set('awaitilityVersion', "4.2.0")
 }
 
 dependencies {
@@ -114,6 +115,7 @@ dependencies {
 	testImplementation 'org.testcontainers:junit-jupiter'
 	testImplementation 'io.grpc:grpc-testing'
 	testImplementation "org.instancio:instancio-junit:${instancioVersion}"
+	testImplementation "org.awaitility:awaitility:${awaitilityVersion}"
 }
 
 dependencyManagement {

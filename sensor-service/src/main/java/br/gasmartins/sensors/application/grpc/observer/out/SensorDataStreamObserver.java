@@ -30,6 +30,11 @@ public class SensorDataStreamObserver implements StreamObserver<SensorData> {
         log.info(append("sensor", sensorData), "Storing sensor data");
         this.storedSensorData = this.service.store(sensorData);
         log.info(append("sensor", sensorData), "Sensor data was stored successfully");
+
+        log.info(append("sensor", this.storedSensorData), "Mapping stored sensor");
+        var storedSensorDataDto = SensorGrpcMapper.mapToDto(this.storedSensorData);
+        log.info(append("sensor", storedSensorDataDto), "Stored sensor was mapped successfully");
+        this.responseObserver.onNext(storedSensorDataDto);
     }
 
     @Override
@@ -40,10 +45,7 @@ public class SensorDataStreamObserver implements StreamObserver<SensorData> {
 
     @Override
     public void onCompleted() {
-        log.info(append("sensor", this.storedSensorData), "Mapping stored sensor");
-        var storedSensorDataDto = SensorGrpcMapper.mapToDto(this.storedSensorData);
-        log.info(append("sensor", storedSensorDataDto), "Stored sensor was mapped successfully");
-        this.responseObserver.onNext(storedSensorDataDto);
+        log.info("Sensor storing finished");
         this.responseObserver.onCompleted();
     }
 

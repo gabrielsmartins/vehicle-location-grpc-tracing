@@ -1,15 +1,14 @@
 package br.gasmartins.sensors.application.grpc;
 
 
-import br.gasmartins.grpc.sensors.SensorData;
-import br.gasmartins.grpc.sensors.SensorDataPage;
 import br.gasmartins.grpc.sensors.SensorServiceGrpc;
 import br.gasmartins.sensors.application.grpc.advice.GrpcExceptionControllerAdvice;
+import br.gasmartins.sensors.application.grpc.support.SensorDataOutputStreamObserver;
+import br.gasmartins.sensors.application.grpc.support.SensorDataPageOutputStreamObserver;
 import br.gasmartins.sensors.domain.service.SensorService;
 import com.google.protobuf.StringValue;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.autoconfigure.GrpcAdviceAutoConfiguration;
 import net.devh.boot.grpc.server.autoconfigure.GrpcReflectionServiceAutoConfiguration;
 import net.devh.boot.grpc.server.autoconfigure.GrpcServerAutoConfiguration;
@@ -29,9 +28,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
+import static br.gasmartins.sensors.application.grpc.support.SensorDataDtoSupport.defaultSensorDataDto;
+import static br.gasmartins.sensors.application.grpc.support.SensorDataDtoSupport.defaultSensorDataPage;
 import static br.gasmartins.sensors.domain.support.SensorDataSupport.defaultSensorData;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -71,30 +74,19 @@ class SensorGrpcControllerTest {
 
     @Test
     @DisplayName("Given Sensor Data When Store Then Return Stored Sensor Data")
-    public void givenSensorDataWhenStoreThenReturnStoredSensorData() {
-
-        var sensorDataStreamObserver = new StreamObserver<SensorData>() {
-            @Override
-            public void onNext(SensorData value) {
-
-            }
-
-            @Override
-            public void onError(Throwable t) {
-
-            }
-
-            @Override
-            public void onCompleted() {
-
-            }
-        };
-
+    public void givenSensorDataWhenStoreThenReturnStoredSensorData()  {
+        var sensorDataStreamObserver = new SensorDataOutputStreamObserver();
 
         when(this.service.store(any(br.gasmartins.sensors.domain.SensorData.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         var streamObserver = this.stub.store(sensorDataStreamObserver);
-        assertThat(streamObserver).isNotNull();
+
+        var sensorDataDto = defaultSensorDataDto().build();
+        sensorDataStreamObserver.onNext(sensorDataDto);
+        streamObserver.onCompleted();
+
+        await().pollDelay(3, TimeUnit.SECONDS)
+               .untilAsserted(() -> assertThat(streamObserver).isNotNull());
     }
 
     @Test
@@ -114,26 +106,14 @@ class SensorGrpcControllerTest {
     @Test
     @DisplayName("Given Vehicle Id And Interval When Exists Then Return Sensor Data Page")
     public void givenVehicleIdAndIntervalWhenExistsThenReturnSensorDataPage() {
-
-        var responseObserver = new StreamObserver<SensorDataPage>() {
-            @Override
-            public void onNext(SensorDataPage value) {
-
-            }
-
-            @Override
-            public void onError(Throwable t) {
-
-            }
-
-            @Override
-            public void onCompleted() {
-
-            }
-        };
-
+        var responseObserver = new SensorDataPageOutputStreamObserver();
 
         var existingSensorData = this.stub.findByVehicleIdAndOccurredOnBetween(responseObserver);
-        assertThat(existingSensorData).isNotNull();
+        var sensorDataPage = defaultSensorDataPage().build();
+        responseObserver.onNext(sensorDataPage);
+        responseObserver.onCompleted();
+
+        await().pollDelay(3, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertThat(existingSensorData).isNotNull());
     }
 }

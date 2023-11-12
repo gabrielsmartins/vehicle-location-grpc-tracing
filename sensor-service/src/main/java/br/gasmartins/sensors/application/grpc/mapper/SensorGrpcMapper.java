@@ -49,7 +49,7 @@ public class SensorGrpcMapper {
                                                  .setLongitude(longitude)
                                                  .build())
                                          .setSpeed(sensorData.getSpeed())
-                                         .setLocation(mapToLocationDto(sensorData))
+                                         .setLocation(sensorData.getLocation().isEmpty() ? Location.getDefaultInstance() : mapToLocationDto(sensorData.getLocation().get()))
                                          .setOccurredOn(TimestampGrpcMapper.toTimestamp(sensorData.getOccurredOn()))
                                          .build();
     }
@@ -81,11 +81,10 @@ public class SensorGrpcMapper {
                                              .build();
     }
 
-    private static Location mapToLocationDto(SensorData sensorData) {
-        if (sensorData.getLocation().isEmpty()) {
+    private static Location mapToLocationDto(br.gasmartins.sensors.domain.Location location) {
+        if (location == null) {
             return null;
         }
-        var location = sensorData.getLocation().get();
         return Location.newBuilder()
                         .setCountry(location.getCountry())
                         .setState(location.getState())

@@ -2,6 +2,7 @@ package br.gasmartins.sensors.application.grpc.advice;
 
 import br.gasmartins.grpc.sensors.SensorServiceGrpc;
 import br.gasmartins.sensors.application.grpc.SensorGrpcController;
+import br.gasmartins.sensors.application.grpc.support.SensorDataOutputStreamObserver;
 import br.gasmartins.sensors.domain.exceptions.SensorNotFoundException;
 import br.gasmartins.sensors.domain.service.SensorService;
 import com.google.protobuf.StringValue;
@@ -27,8 +28,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
+import static br.gasmartins.sensors.application.grpc.support.SensorDataDtoSupport.defaultSensorDataDto;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.awaitility.Awaitility.await;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 
@@ -50,6 +55,7 @@ class GrpcExceptionControllerAdviceTest {
 
     private ManagedChannel channel;
     private SensorServiceGrpc.SensorServiceBlockingStub blockingStub;
+    private SensorServiceGrpc.SensorServiceStub stub;
 
     @BeforeEach
     public void setup() {
@@ -57,11 +63,30 @@ class GrpcExceptionControllerAdviceTest {
                                             .usePlaintext()
                                             .build();
         this.blockingStub = SensorServiceGrpc.newBlockingStub(this.channel);
+        this.stub = SensorServiceGrpc.newStub(this.channel);
     }
 
     @AfterEach
     public void tearDown() {
         this.channel.shutdown();
+    }
+
+    @Test
+    @DisplayName("Given Sensor Data When Error Then Return Internal Error")
+    public void givenSensorDataWhenErrorThenReturnInternalError()  {
+        var sensorDataStreamObserver = new SensorDataOutputStreamObserver();
+
+        var message = "Internal Server Error";
+        when(this.service.store(any(br.gasmartins.sensors.domain.SensorData.class))).thenThrow(new RuntimeException(message));
+
+        var sensorDataDto = defaultSensorDataDto().build();
+        sensorDataStreamObserver.onNext(sensorDataDto);
+        sensorDataStreamObserver.onCompleted();
+
+        await().pollDelay(3, TimeUnit.SECONDS)
+               .untilAsserted(() -> assertThatThrownBy(() ->  this.stub.store(sensorDataStreamObserver))
+                        .isInstanceOf(StatusRuntimeException.class)
+                        .hasMessageContaining(message));
     }
 
     @Test

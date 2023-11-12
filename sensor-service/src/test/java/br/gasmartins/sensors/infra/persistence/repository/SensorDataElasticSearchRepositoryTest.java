@@ -1,6 +1,6 @@
 package br.gasmartins.sensors.infra.persistence.repository;
 
-import br.gasmartins.sensors.infra.persistence.support.ElasticserchContainerSupport;
+import br.gasmartins.sensors.infra.persistence.support.ElasticsearchContainerSupport;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Import(SensorDataElasticSearchRepository.class)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @ActiveProfiles("test")
-class SensorDataElasticSearchRepositoryTest extends ElasticserchContainerSupport {
+class SensorDataElasticSearchRepositoryTest extends ElasticsearchContainerSupport {
 
     private final SensorDataElasticSearchRepository repository;
 

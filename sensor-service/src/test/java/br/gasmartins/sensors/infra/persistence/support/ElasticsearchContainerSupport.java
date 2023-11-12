@@ -9,8 +9,8 @@ import org.testcontainers.elasticsearch.ElasticsearchContainer;
 import org.testcontainers.utility.DockerImageName;
 
 @TestConfiguration
-@ContextConfiguration(initializers = ElasticserchContainerSupport.DataSourceInitializer.class)
-public class ElasticserchContainerSupport {
+@ContextConfiguration(initializers = ElasticsearchContainerSupport.DataSourceInitializer.class)
+public class ElasticsearchContainerSupport {
 
 	private static final ElasticsearchContainer ELASTICSEARCH_CONTAINER;
 

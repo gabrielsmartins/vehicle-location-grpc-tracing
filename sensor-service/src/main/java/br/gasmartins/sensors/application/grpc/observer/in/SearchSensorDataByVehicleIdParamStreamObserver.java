@@ -18,7 +18,7 @@ import static net.logstash.logback.marker.Markers.append;
 @Slf4j
 public class SearchSensorDataByVehicleIdParamStreamObserver implements StreamObserver<SearchSensorDataByVehicleIdParam> {
 
-    private final SensorService sensorService;
+    private final SensorService service;
     private final StreamObserver<SensorDataPage> responseObserver;
 
     @Override
@@ -29,7 +29,7 @@ public class SearchSensorDataByVehicleIdParamStreamObserver implements StreamObs
         var endOccurredOn = toLocalDatetime(request.getEndOccurredOn());
         var pageable = request.getPageable();
         var pageRequest = PageRequest.of(pageable.getPage(), pageable.getPageSize());
-        var page = this.sensorService.findByVehicleIdAndOccurredOnBetween(vehicleId, startOccurredOn, endOccurredOn, pageRequest);
+        var page = this.service.findByVehicleIdAndOccurredOnBetween(vehicleId, startOccurredOn, endOccurredOn, pageRequest);
         log.info(append("page", page), "Sensor was found successfully");
 
         log.info(append("page", page), "Mapping page");
