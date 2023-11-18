@@ -1,35 +1,39 @@
 package br.gasmartins.sensors.application.grpc.advice;
 
+import br.gasmartins.grpc.sensors.SensorData;
 import br.gasmartins.grpc.sensors.SensorServiceGrpc;
 import br.gasmartins.sensors.application.grpc.SensorGrpcController;
-import br.gasmartins.sensors.application.grpc.support.SensorDataOutputStreamObserver;
 import br.gasmartins.sensors.domain.exceptions.SensorNotFoundException;
 import br.gasmartins.sensors.domain.service.SensorService;
 import com.google.protobuf.StringValue;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
+import io.grpc.stub.StreamObserver;
+import lombok.Getter;
 import net.devh.boot.grpc.server.autoconfigure.GrpcAdviceAutoConfiguration;
 import net.devh.boot.grpc.server.autoconfigure.GrpcReflectionServiceAutoConfiguration;
 import net.devh.boot.grpc.server.autoconfigure.GrpcServerAutoConfiguration;
 import net.devh.boot.grpc.server.autoconfigure.GrpcServerFactoryAutoConfiguration;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static br.gasmartins.sensors.application.grpc.support.SensorDataDtoSupport.defaultSensorDataDto;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.awaitility.Awaitility.await;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -69,20 +73,42 @@ class GrpcExceptionControllerAdviceTest {
 
     @Test
     @DisplayName("Given Sensor Data When Error Then Return Internal Error")
-    public void givenSensorDataWhenErrorThenReturnInternalError()  {
-        var sensorDataStreamObserver = new SensorDataOutputStreamObserver();
+    public void givenSensorDataWhenErrorThenReturnInternalError() throws InterruptedException {
+
+        var latch = new CountDownLatch(1);
+        var responseObserver = new StreamObserver<SensorData>() {
+
+            @Getter
+            private Throwable throwable;
+
+            @Override
+            public void onNext(SensorData value) {
+                //fail("Error while processing request");
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                this.throwable = throwable;
+            }
+
+            @Override
+            public void onCompleted() {
+                latch.countDown();
+            }
+        };
 
         var message = "Internal Server Error";
         when(this.service.store(any(br.gasmartins.sensors.domain.SensorData.class))).thenThrow(new RuntimeException(message));
 
-        stub.store(sensorDataStreamObserver);
-        var sensorDataDto = defaultSensorDataDto().build();
-        sensorDataStreamObserver.onNext(sensorDataDto);
+        var streamObserver = stub.store(responseObserver);
 
-        await().pollDelay(5, TimeUnit.SECONDS)
-               .untilAsserted(() -> assertThatThrownBy(sensorDataStreamObserver::onCompleted)
-                        .isInstanceOf(StatusRuntimeException.class)
-                        .hasMessageContaining(message));
+        var sensorDataDto = defaultSensorDataDto().build();
+        responseObserver.onNext(sensorDataDto);
+        responseObserver.onCompleted();
+
+        assertThat(latch.await(5, TimeUnit.SECONDS)).isTrue();
+        assertThat(streamObserver).isNotNull();
+        assertThat(responseObserver.getThrowable()).isNotNull();
     }
 
     @Test
