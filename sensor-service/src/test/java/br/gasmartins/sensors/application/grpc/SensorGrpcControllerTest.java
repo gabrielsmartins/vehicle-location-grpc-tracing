@@ -13,10 +13,7 @@ import net.devh.boot.grpc.server.autoconfigure.GrpcAdviceAutoConfiguration;
 import net.devh.boot.grpc.server.autoconfigure.GrpcReflectionServiceAutoConfiguration;
 import net.devh.boot.grpc.server.autoconfigure.GrpcServerAutoConfiguration;
 import net.devh.boot.grpc.server.autoconfigure.GrpcServerFactoryAutoConfiguration;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
@@ -48,28 +45,27 @@ import static org.mockito.Mockito.when;
 })
 @ActiveProfiles("test")
 @ContextConfiguration(initializers = ConfigDataApplicationContextInitializer.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class SensorGrpcControllerTest {
 
     @MockBean
     private SensorService service;
 
-    private ManagedChannel channel;
-    private SensorServiceGrpc.SensorServiceBlockingStub blockingStub;
-    private SensorServiceGrpc.SensorServiceStub stub;
+    private static ManagedChannel channel;
+    private static SensorServiceGrpc.SensorServiceBlockingStub blockingStub;
+    private static SensorServiceGrpc.SensorServiceStub stub;
 
-    @BeforeEach
-    public void setup() {
-        this.channel = ManagedChannelBuilder.forAddress("localhost", 8087)
-                                            .usePlaintext()
-                                            .build();
-        this.blockingStub = SensorServiceGrpc.newBlockingStub(this.channel);
-        this.stub = SensorServiceGrpc.newStub(this.channel);
+    @BeforeAll
+    public static void setupAll() {
+        channel = ManagedChannelBuilder.forAddress("localhost", 8087)
+                                        .usePlaintext()
+                                        .build();
+        blockingStub = SensorServiceGrpc.newBlockingStub(channel);
+        stub = SensorServiceGrpc.newStub(channel);
     }
 
-    @AfterEach
-    public void tearDown() {
-        this.channel.shutdown();
+    @AfterAll
+    public static void tearDownAll() {
+        channel.shutdown();
     }
 
     @Test
@@ -79,13 +75,13 @@ class SensorGrpcControllerTest {
 
         when(this.service.store(any(br.gasmartins.sensors.domain.SensorData.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        var streamObserver = this.stub.store(sensorDataStreamObserver);
+        var streamObserver = stub.store(sensorDataStreamObserver);
 
         var sensorDataDto = defaultSensorDataDto().build();
         sensorDataStreamObserver.onNext(sensorDataDto);
         streamObserver.onCompleted();
 
-        await().pollDelay(3, TimeUnit.SECONDS)
+        await().pollDelay(5, TimeUnit.SECONDS)
                .untilAsserted(() -> assertThat(streamObserver).isNotNull());
     }
 
@@ -99,7 +95,7 @@ class SensorGrpcControllerTest {
         var request = StringValue.newBuilder()
                                  .setValue(id.toString())
                                  .build();
-        var existingSensorData = this.blockingStub.findBySensorId(request);
+        var existingSensorData = blockingStub.findBySensorId(request);
         assertThat(existingSensorData).isNotNull();
     }
 
@@ -108,12 +104,12 @@ class SensorGrpcControllerTest {
     public void givenVehicleIdAndIntervalWhenExistsThenReturnSensorDataPage() {
         var responseObserver = new SensorDataPageOutputStreamObserver();
 
-        var existingSensorData = this.stub.findByVehicleIdAndOccurredOnBetween(responseObserver);
+        var existingSensorData = stub.findByVehicleIdAndOccurredOnBetween(responseObserver);
         var sensorDataPage = defaultSensorDataPage().build();
         responseObserver.onNext(sensorDataPage);
         responseObserver.onCompleted();
 
-        await().pollDelay(3, TimeUnit.SECONDS)
+        await().pollDelay(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertThat(existingSensorData).isNotNull());
     }
 }

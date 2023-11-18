@@ -1,22 +1,27 @@
 package br.gasmartins.sensors.infra.persistence.repository;
 
+import br.gasmartins.sensors.infra.persistence.config.ElasticsearchConfiguration;
+import br.gasmartins.sensors.infra.persistence.config.ObjectMapperConfiguration;
 import br.gasmartins.sensors.infra.persistence.support.ElasticsearchContainerSupport;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.elasticsearch.DataElasticsearchTest;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 
 import static br.gasmartins.sensors.infra.persistence.support.SensorDataEntitySupport.defaultSensorDataEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataElasticsearchTest
-@Import(SensorDataElasticSearchRepository.class)
+@Import({ElasticsearchConfiguration.class, ObjectMapperConfiguration.class})
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @ActiveProfiles("test")
+@ContextConfiguration(initializers = ConfigDataApplicationContextInitializer.class)
 class SensorDataElasticSearchRepositoryTest extends ElasticsearchContainerSupport {
 
     private final SensorDataElasticSearchRepository repository;

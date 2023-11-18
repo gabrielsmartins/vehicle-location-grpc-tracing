@@ -1,4 +1,4 @@
-package br.gasmartins.sensors;
+package br.gasmartins.sensors.infra.common.tracing.config;
 
 import io.opentelemetry.api.OpenTelemetry;
 import org.springframework.context.annotation.Bean;
