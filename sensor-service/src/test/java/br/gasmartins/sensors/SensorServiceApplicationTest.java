@@ -7,7 +7,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class SensorServiceApplicationTests extends ElasticsearchContainerSupport {
+class SensorServiceApplicationTest extends ElasticsearchContainerSupport {
 
 	@Test
 	void contextLoads() {
