@@ -1,5 +1,6 @@
 package br.gasmartins.vehicles;
 
+import br.gasmartins.locations.LocationServiceApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
@@ -17,7 +18,7 @@ public class TestVehicleServiceApplication {
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.from(VehicleServiceApplication::main).with(TestVehicleServiceApplication.class).run(args);
+		SpringApplication.from(LocationServiceApplication::main).with(TestVehicleServiceApplication.class).run(args);
 	}
 
 }

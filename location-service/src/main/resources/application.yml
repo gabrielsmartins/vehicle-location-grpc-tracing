@@ -7,13 +7,9 @@ grpc:
 
 spring:
   application:
-    name: vehicle-service
+    name: location-service
   main:
     allow-bean-definition-overriding: true
-  data:
-    elasticsearch:
-      repositories:
-        enabled: true
 
 management:
   tracing:

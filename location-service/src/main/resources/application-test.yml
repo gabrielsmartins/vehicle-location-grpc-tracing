@@ -3,14 +3,6 @@ grpc:
     in-process-name: ${spring.application.name}
     shutdown-grace-period: 0
 
-spring:
-  data:
-    elasticsearch:
-      repositories:
-        enabled: true
-  elasticsearch:
-    uris:
-      - http://localhost:9200
 eureka:
   client:
     enabled: false

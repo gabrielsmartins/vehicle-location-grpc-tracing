@@ -1,13 +1,13 @@
-package br.gasmartins.vehicles;
+package br.gasmartins.locations;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class VehicleServiceApplication {
+public class LocationServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(VehicleServiceApplication.class, args);
+		SpringApplication.run(LocationServiceApplication.class, args);
 	}
 
 }

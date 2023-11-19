@@ -42,7 +42,7 @@ ext {
 	set('grpcVersion', "1.59.0")
 	set('protobufVersion', "3.25.0")
 	set('annotationsApiVersion', "6.0.53")
-	set('googleApiVersion', "2.28.0")
+	set('googleProtoVersion', "2.28.0")
 	set('logstashVersion', "7.4")
 	set('otelGrpcVersion', "1.31.0-alpha")
 	set('otelLogsVersion', "1.26.0-alpha")
@@ -96,7 +96,7 @@ dependencies {
 	implementation 'io.grpc:grpc-stub'
 	implementation 'com.google.protobuf:protobuf-java'
 	implementation 'com.google.protobuf:protobuf-java-util'
-	implementation "com.google.api.grpc:proto-google-common-protos:${googleApiVersion}"
+	implementation "com.google.api.grpc:proto-google-common-protos:${googleProtoVersion}"
 
 	if (JavaVersion.current().isJava9Compatible()) {
 		// Workaround for @javax.annotation.Generated

@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package br.gasmartins.grpc.locations;
+
+option java_package = "br.gasmartins.grpc.locations";
+option java_outer_classname="LocationProto";
+option java_multiple_files = true;
+
+import "google/api/annotations.proto";
+
+service LocationService {
+
+  rpc GetLocationByCoordinates(Coordinates) returns (Location) {
+    option (google.api.http) = {
+      post : "/v1/locations"
+      body: "*"
+    };
+  }
+
+}
+message Coordinates {
+  float latitude = 1;
+  float longitude = 2;
+}
+
+message Location {
+
+  string country = 1;
+  string state = 2;
+  string city = 3;
+  string district = 4;
+  string address = 5;
+  string zipCode = 6;
+
+}
