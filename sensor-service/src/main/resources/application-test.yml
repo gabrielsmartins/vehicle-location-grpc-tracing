@@ -13,4 +13,5 @@ spring:
       - http://localhost:9200
 eureka:
   client:
+    enabled: false
     register-with-eureka: false

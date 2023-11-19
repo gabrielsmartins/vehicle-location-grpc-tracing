@@ -5,7 +5,7 @@ global:
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
-      - targets: [ 'localhost:9090' ]
+      - targets: [ 'host.docker.internal:9090' ]
   - job_name: 'tempo'
     static_configs:
       - targets: [ 'tempo:3200' ]
@@ -13,13 +13,13 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     scrape_interval: 3s
     static_configs:
-      - targets: ['localhost:8080']
+      - targets: ['host.docker.internal:8080']
         labels:
           application: 'Sensor Service'   
   - job_name: 'vehicle-service'
     metrics_path: '/actuator/prometheus'
     scrape_interval: 3s
     static_configs:
-      - targets: ['localhost:8082']
+      - targets: ['host.docker.internal:8082']
         labels:
           application: 'Vehicle Service'           

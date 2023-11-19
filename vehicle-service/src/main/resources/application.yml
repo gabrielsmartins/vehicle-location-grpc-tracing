@@ -3,10 +3,36 @@ server:
 
 grpc:
   server:
-    port: 8083
+    port: 8085
 
 spring:
   application:
-    name: sensor-service
+    name: vehicle-service
   main:
     allow-bean-definition-overriding: true
+  data:
+    elasticsearch:
+      repositories:
+        enabled: true
+
+management:
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: http://localhost:4317
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+  health:
+    elasticsearch:
+      enabled: false
