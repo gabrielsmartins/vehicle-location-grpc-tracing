@@ -3,6 +3,7 @@ syntax = "proto3";
 package br.gasmartins.grpc.common;
 
 option java_package = "br.gasmartins.grpc.common";
+option java_outer_classname="PaginationProto";
 option java_multiple_files = true;
 
 message Pageable {
