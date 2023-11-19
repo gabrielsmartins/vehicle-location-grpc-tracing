@@ -1,4 +1,4 @@
-name: Vehicle Service CI
+name: Location Service CI
 
 on: [push]
 
