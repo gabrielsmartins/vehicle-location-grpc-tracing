@@ -1,4 +1,4 @@
-name: Vehicle Service CI
+name: Location Service CI
 
 on: [push]
 
@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./vehicle-service
+        working-directory: ./location-service
     steps:
       - uses: actions/checkout@v2
 
