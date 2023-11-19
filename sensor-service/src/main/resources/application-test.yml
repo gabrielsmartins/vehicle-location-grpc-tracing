@@ -1,5 +1,6 @@
 grpc:
   server:
+    in-process-name: ${spring.application.name}
     shutdown-grace-period: 0
 
 spring:

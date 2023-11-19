@@ -41,12 +41,13 @@ public class SearchSensorDataByVehicleIdParamStreamObserver implements StreamObs
     @Override
     public void onError(Throwable t) {
         log.error("Error searching sensor data", t);
+        this.responseObserver.onError(t);
     }
 
     @Override
     public void onCompleted() {
+        log.info("All request data is received");
         this.responseObserver.onCompleted();
-        log.info("Sensor data was found successfully");
     }
 
 }

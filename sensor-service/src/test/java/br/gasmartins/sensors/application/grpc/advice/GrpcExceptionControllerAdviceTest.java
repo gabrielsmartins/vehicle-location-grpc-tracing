@@ -15,8 +15,8 @@ import net.devh.boot.grpc.server.autoconfigure.GrpcAdviceAutoConfiguration;
 import net.devh.boot.grpc.server.autoconfigure.GrpcReflectionServiceAutoConfiguration;
 import net.devh.boot.grpc.server.autoconfigure.GrpcServerAutoConfiguration;
 import net.devh.boot.grpc.server.autoconfigure.GrpcServerFactoryAutoConfiguration;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,16 +24,17 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static br.gasmartins.sensors.application.grpc.support.SensorDataDtoSupport.defaultSensorDataDto;
 import static org.assertj.core.api.Assertions.*;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -48,34 +49,35 @@ import static org.mockito.Mockito.when;
 })
 @ActiveProfiles("test")
 @ContextConfiguration(initializers = ConfigDataApplicationContextInitializer.class)
+@DirtiesContext
 class GrpcExceptionControllerAdviceTest {
 
     @MockBean
     private SensorService service;
 
-    private static ManagedChannel channel;
-    private static SensorServiceGrpc.SensorServiceBlockingStub blockingStub;
-    private static SensorServiceGrpc.SensorServiceStub stub;
+    private ManagedChannel channel;
+    private SensorServiceGrpc.SensorServiceBlockingStub blockingStub;
+    private SensorServiceGrpc.SensorServiceStub stub;
 
-    @BeforeAll
-    public static void setupAll() {
-        channel = ManagedChannelBuilder.forAddress("localhost", 8087)
-                                        .usePlaintext()
-                                        .build();
-        blockingStub = SensorServiceGrpc.newBlockingStub(channel);
-        stub = SensorServiceGrpc.newStub(channel);
+    @BeforeEach
+    public void setup() {
+        this.channel = ManagedChannelBuilder.forAddress("localhost", 8087)
+                                            .usePlaintext()
+                                            .build();
+        this.blockingStub = SensorServiceGrpc.newBlockingStub(this.channel);
+        this.stub = SensorServiceGrpc.newStub(this.channel);
     }
 
-    @AfterAll
-    public static void tearDownAll() {
-        channel.shutdown();
+    @AfterEach
+    public void tearDown() {
+        this.channel.shutdown();
     }
 
     @Test
     @DisplayName("Given Sensor Data When Error Then Return Internal Error")
-    public void givenSensorDataWhenErrorThenReturnInternalError() throws InterruptedException {
+    public void givenSensorDataWhenErrorThenReturnInternalError() {
 
-        var latch = new CountDownLatch(1);
+
         var responseObserver = new StreamObserver<SensorData>() {
 
             @Getter
@@ -83,7 +85,7 @@ class GrpcExceptionControllerAdviceTest {
 
             @Override
             public void onNext(SensorData value) {
-                //fail("Error while processing request");
+                fail("Error while processing request");
             }
 
             @Override
@@ -93,22 +95,21 @@ class GrpcExceptionControllerAdviceTest {
 
             @Override
             public void onCompleted() {
-                latch.countDown();
+                System.out.println("Response is complete");
             }
         };
 
         var message = "Internal Server Error";
         when(this.service.store(any(br.gasmartins.sensors.domain.SensorData.class))).thenThrow(new RuntimeException(message));
 
-        var streamObserver = stub.store(responseObserver);
+        var requestObserver = this.stub.store(responseObserver);
 
         var sensorDataDto = defaultSensorDataDto().build();
-        responseObserver.onNext(sensorDataDto);
-        responseObserver.onCompleted();
+        requestObserver.onNext(sensorDataDto);
+        requestObserver.onCompleted();
 
-        assertThat(latch.await(5, TimeUnit.SECONDS)).isTrue();
-        assertThat(streamObserver).isNotNull();
-        assertThat(responseObserver.getThrowable()).isNotNull();
+        await().atMost(30, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertThat(responseObserver.getThrowable()).isNotNull());
     }
 
     @Test
@@ -122,7 +123,7 @@ class GrpcExceptionControllerAdviceTest {
                                 .setValue(id.toString())
                                 .build();
 
-        assertThatThrownBy(() -> blockingStub.findBySensorId(request))
+        assertThatThrownBy(() -> this.blockingStub.findBySensorId(request))
                 .isInstanceOf(StatusRuntimeException.class)
                 .hasMessageContaining(exception.getMessage());
     }

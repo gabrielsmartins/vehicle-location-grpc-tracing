@@ -40,12 +40,12 @@ public class SensorDataStreamObserver implements StreamObserver<SensorData> {
     @Override
     public void onError(Throwable t) {
         log.error("Error processing request", t);
-        this.responseObserver.onCompleted();
+        this.responseObserver.onError(t);
     }
 
     @Override
     public void onCompleted() {
-        log.info("Sensor storing finished");
+        log.info("All sensor data was found");
         this.responseObserver.onCompleted();
     }
 

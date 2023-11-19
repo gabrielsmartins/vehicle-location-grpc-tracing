@@ -15,15 +15,13 @@ import net.devh.boot.grpc.server.autoconfigure.GrpcAdviceAutoConfiguration;
 import net.devh.boot.grpc.server.autoconfigure.GrpcReflectionServiceAutoConfiguration;
 import net.devh.boot.grpc.server.autoconfigure.GrpcServerAutoConfiguration;
 import net.devh.boot.grpc.server.autoconfigure.GrpcServerFactoryAutoConfiguration;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -31,13 +29,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static br.gasmartins.sensors.application.grpc.support.SensorDataDtoSupport.defaultSensorDataDto;
-import static br.gasmartins.sensors.application.grpc.support.SensorDataDtoSupport.defaultSensorDataPage;
+import static br.gasmartins.sensors.application.grpc.support.SensorDataDtoSupport.*;
 import static br.gasmartins.sensors.domain.support.SensorDataSupport.defaultSensorData;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -51,34 +49,33 @@ import static org.mockito.Mockito.when;
 })
 @ActiveProfiles("test")
 @ContextConfiguration(initializers = ConfigDataApplicationContextInitializer.class)
+@DirtiesContext
 class SensorGrpcControllerTest {
 
     @MockBean
     private SensorService service;
 
-    private static ManagedChannel channel;
-    private static SensorServiceGrpc.SensorServiceBlockingStub blockingStub;
-    private static SensorServiceGrpc.SensorServiceStub stub;
+    private ManagedChannel channel;
+    private SensorServiceGrpc.SensorServiceBlockingStub blockingStub;
+    private SensorServiceGrpc.SensorServiceStub stub;
 
-    @BeforeAll
-    public static void setupAll() {
-        channel = ManagedChannelBuilder.forAddress("localhost", 8087)
-                                        .usePlaintext()
-                                        .build();
-        blockingStub = SensorServiceGrpc.newBlockingStub(channel);
-        stub = SensorServiceGrpc.newStub(channel);
+    @BeforeEach
+    public void setup() {
+        this.channel = ManagedChannelBuilder.forAddress("localhost", 8087)
+                .usePlaintext()
+                .build();
+        this.blockingStub = SensorServiceGrpc.newBlockingStub(this.channel);
+        this.stub = SensorServiceGrpc.newStub(this.channel);
     }
 
-    @AfterAll
-    public static void tearDownAll() {
-        channel.shutdown();
+    @AfterEach
+    public void tearDown() {
+        this.channel.shutdown();
     }
 
     @Test
     @DisplayName("Given Sensor Data When Store Then Return Stored Sensor Data")
-    public void givenSensorDataWhenStoreThenReturnStoredSensorData() throws InterruptedException {
-
-        var latch = new CountDownLatch(1);
+    public void givenSensorDataWhenStoreThenReturnStoredSensorData() {
         var responseObserver = new StreamObserver<SensorData>() {
 
             @Getter
@@ -95,21 +92,20 @@ class SensorGrpcControllerTest {
 
             @Override
             public void onCompleted() {
-                latch.countDown();
+                System.out.println("Response is complete");
             }
         };
 
         when(this.service.store(any(br.gasmartins.sensors.domain.SensorData.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        var streamObserver = stub.store(responseObserver);
+        var requestObserver = stub.store(responseObserver);
 
         var sensorDataDto = defaultSensorDataDto().build();
-        responseObserver.onNext(sensorDataDto);
-        responseObserver.onCompleted();
+        requestObserver.onNext(sensorDataDto);
+        requestObserver.onCompleted();
 
-        assertThat(latch.await(5, TimeUnit.SECONDS)).isTrue();
-        assertThat(streamObserver).isNotNull();
-        assertThat(responseObserver.getData()).isNotNull();
+        await().atMost(30, TimeUnit.SECONDS)
+                .untilAsserted(() ->  assertThat(responseObserver.getData()).isNotNull());
     }
 
     @Test
@@ -122,14 +118,13 @@ class SensorGrpcControllerTest {
         var request = StringValue.newBuilder()
                                  .setValue(id.toString())
                                  .build();
-        var existingSensorData = blockingStub.findBySensorId(request);
+        var existingSensorData = this.blockingStub.findBySensorId(request);
         assertThat(existingSensorData).isNotNull();
     }
 
     @Test
     @DisplayName("Given Vehicle Id And Interval When Exists Then Return Sensor Data Page")
-    public void givenVehicleIdAndIntervalWhenExistsThenReturnSensorDataPage() throws InterruptedException {
-        var latch = new CountDownLatch(1);
+    public void givenVehicleIdAndIntervalWhenExistsThenReturnSensorDataPage() {
         var responseObserver = new StreamObserver<SensorDataPage>() {
 
             @Getter
@@ -147,18 +142,17 @@ class SensorGrpcControllerTest {
 
             @Override
             public void onCompleted() {
-                latch.countDown();
+                System.out.println("Response is complete");
             }
         };
 
-        var existingSensorData = stub.findByVehicleIdAndOccurredOnBetween(responseObserver);
-        var sensorDataPage = defaultSensorDataPage().build();
-        responseObserver.onNext(sensorDataPage);
-        responseObserver.onCompleted();
+        var requestObserver = this.stub.findByVehicleIdAndOccurredOnBetween(responseObserver);
+        var paramDto = defaultSearchSensorDataByVehicleIdParamDto().build();
+        requestObserver.onNext(paramDto);
+        requestObserver.onCompleted();
 
-        assertThat(latch.await(5, TimeUnit.SECONDS)).isTrue();
-        assertThat(existingSensorData).isNotNull();
-        assertThat(responseObserver.getData()).isNotEmpty();
+        await().atMost(30, TimeUnit.SECONDS)
+                .untilAsserted(() ->  assertThat(responseObserver.getData()).isNotEmpty());
     }
 
 }
