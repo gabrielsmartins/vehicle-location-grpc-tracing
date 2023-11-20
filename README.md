@@ -21,7 +21,7 @@ This project is an example of using SpringBoot 3 using Grpc and Micrometer Traci
 > The architecture was based on the explanation of the ideas in the book <a href="https://www.amazon.com/Practical-Domain-Driven-Design-Enterprise-Java/dp/1484245423">**Practical Domain-Driven Design in Enterprise Java Using Jakarta EE, Eclipse MicroProfile, Spring Boot, and the Axon Framework**</a> by **Vijay Nair**
 
 <p align="center">
-<img src="assets/book.png" width="400" height="600">
+<img src="assets/book.png" width="250" height="400">
 </p>
 
 # Getting Started
