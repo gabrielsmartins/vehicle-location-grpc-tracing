@@ -1,4 +1,4 @@
-package br.gasmartins.sensors.domain;
+package br.gasmartins.locations.domain;
 
 import lombok.*;
 
@@ -11,6 +11,5 @@ public class Coordinates {
 
     private Double latitude;
     private Double longitude;
-
 
 }

@@ -2,6 +2,14 @@ spring:
   elasticsearch:
     uris:
       - localhost:9200
+
+grpc:
+  client:
+    location-client:
+      address: static://localhost:8085
+      negotiationType: PLAINTEXT
+
+
 eureka:
   client:
     enabled: false

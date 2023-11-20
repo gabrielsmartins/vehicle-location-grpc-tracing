@@ -12,10 +12,10 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 public class CoordinatesEntity {
 
     @Field(name = "latitude", type = FieldType.Double)
-    private Float latitude;
+    private Double latitude;
 
     @Field(name = "longitude", type = FieldType.Double)
-    private Float longitude;
+    private Double longitude;
 
 
 }

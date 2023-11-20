@@ -1,7 +1,7 @@
 package br.gasmartins.sensors.infra.persistence.adapter;
 
 import br.gasmartins.sensors.domain.SensorData;
-import br.gasmartins.sensors.domain.repository.SensorRepository;
+import br.gasmartins.sensors.application.repository.SensorRepository;
 import br.gasmartins.sensors.infra.persistence.adapter.mapper.SensorPersistenceMapper;
 import br.gasmartins.sensors.infra.persistence.service.SensorPersistenceService;
 import lombok.RequiredArgsConstructor;
