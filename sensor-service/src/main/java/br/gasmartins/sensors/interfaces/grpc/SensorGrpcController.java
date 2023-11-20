@@ -56,6 +56,7 @@ public class SensorGrpcController extends SensorServiceGrpc.SensorServiceImplBas
     @Counted(value = "sensor-data-by-vehicle-id.count", description = "Number of requests to search sensor data by vehicle id")
     @Override
     public StreamObserver<SearchSensorDataByVehicleIdParam> findByVehicleIdAndOccurredOnBetween(StreamObserver<SensorDataPage> responseObserver) {
+        log.info("Searching sensor data");
         return new SearchSensorDataByVehicleIdParamStreamObserver(this.service, responseObserver);
     }
 
