@@ -1,18 +1,20 @@
 server:
-  port: 8080
+  port: 8082
 
 grpc:
   server:
-    port: 8087
+    port: 8085
 
 spring:
   application:
-    name: sensor-service
+    name: location-service
   main:
     allow-bean-definition-overriding: true
-  data:
-    elasticsearch:
-      repositories:
+  cloud:
+    openfeign:
+      micrometer:
+        enabled: true
+      okhttp:
         enabled: true
 
 management:
@@ -36,3 +38,10 @@ management:
   health:
     elasticsearch:
       enabled: false
+
+
+feign:
+  client:
+    config:
+      location-client:
+        logger-level: FULL

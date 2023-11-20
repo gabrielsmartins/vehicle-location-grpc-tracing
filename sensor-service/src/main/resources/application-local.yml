@@ -1,0 +1,16 @@
+spring:
+  elasticsearch:
+    uris:
+      - localhost:9200
+
+grpc:
+  client:
+    location-client:
+      address: static://localhost:8085
+      enable-keep-alive: false
+      negotiation-type: PLAINTEXT
+
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false

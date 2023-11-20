@@ -1,3 +1,23 @@
+grpc:
+  server:
+    in-process-name: ${spring.application.name}
+    shutdown-grace-period: 0
+  client:
+    location-client:
+      address: static://localhost:8085
+      enable-keep-alive: false
+      negotiation-type: PLAINTEXT
+
+spring:
+  data:
+    elasticsearch:
+      repositories:
+        enabled: true
+  elasticsearch:
+    uris:
+      - http://localhost:9200
+
 eureka:
   client:
+    enabled: false
     register-with-eureka: false

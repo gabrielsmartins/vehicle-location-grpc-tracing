@@ -1,0 +1,9 @@
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+
+webservice:
+  position-stack:
+    api-key: ${POSITION_STACK_API_KEY}
+    url: http://api.positionstack.com/v1

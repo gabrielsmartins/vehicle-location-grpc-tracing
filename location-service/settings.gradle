@@ -1,4 +1,4 @@
 pluginManagement {
     apply from: 'repositories.gradle', to: pluginManagement
 }
-rootProject.name = 'sensor-service'
+rootProject.name = 'location-service'
