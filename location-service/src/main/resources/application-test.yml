@@ -3,6 +3,12 @@ grpc:
     in-process-name: ${spring.application.name}
     shutdown-grace-period: 0
 
+webservice:
+  position-stack:
+    api-key: 'api-key'
+    url: http://localhost:5000
+
+
 eureka:
   client:
     enabled: false
