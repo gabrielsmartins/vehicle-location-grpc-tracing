@@ -12,6 +12,8 @@ spring:
     allow-bean-definition-overriding: true
   cloud:
     openfeign:
+      micrometer:
+        enabled: true
       okhttp:
         enabled: true
 

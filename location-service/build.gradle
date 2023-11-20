@@ -67,6 +67,7 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	implementation "io.github.openfeign:feign-core:${feignOkHttpVersion}"
 	implementation "io.github.openfeign:feign-okhttp:${feignOkHttpVersion}"
+	implementation "io.github.openfeign:feign-micrometer:${feignOkHttpVersion}"
 
 	implementation 'de.codecentric:spring-boot-admin-starter-client'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
