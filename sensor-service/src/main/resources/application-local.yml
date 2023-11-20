@@ -7,8 +7,8 @@ grpc:
   client:
     location-client:
       address: static://localhost:8085
-      negotiationType: PLAINTEXT
-
+      enable-keep-alive: false
+      negotiation-type: PLAINTEXT
 
 eureka:
   client:

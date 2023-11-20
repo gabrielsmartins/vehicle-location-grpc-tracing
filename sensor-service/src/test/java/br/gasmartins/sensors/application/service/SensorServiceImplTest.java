@@ -1,5 +1,7 @@
 package br.gasmartins.sensors.application.service;
 
+import br.gasmartins.sensors.application.query.LocationQuery;
+import br.gasmartins.sensors.domain.Coordinates;
 import br.gasmartins.sensors.domain.exceptions.SensorNotFoundException;
 import br.gasmartins.sensors.application.repository.SensorRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,21 +15,25 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static br.gasmartins.sensors.domain.support.LocationSupport.defaultLocation;
 import static br.gasmartins.sensors.domain.support.SensorDataSupport.defaultSensorData;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class SensorServiceImplTest {
 
     private SensorServiceImpl service;
+    private LocationQuery query;
     private SensorRepository repository;
 
     @BeforeEach
     public void setup() {
+        this.query = mock(LocationQuery.class);
         this.repository = mock(SensorRepository.class);
-        this.service = new SensorServiceImpl(this.repository);
+        this.service = new SensorServiceImpl(this.query, this.repository);
     }
 
     @Test
@@ -35,6 +41,7 @@ class SensorServiceImplTest {
     public void givenSensorDataWhenStoreThenReturnStoredSensorData() {
         var sensorData = defaultSensorData().build();
 
+        when(this.query.findByCoordinates(any(Coordinates.class))).thenReturn(defaultLocation().build());
         when(this.repository.store(sensorData)).thenAnswer(invocation -> invocation.getArgument(0));
 
         var storedSensorDataEntity = this.service.store(sensorData);
