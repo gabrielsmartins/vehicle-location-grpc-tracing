@@ -10,6 +10,10 @@ spring:
     name: location-service
   main:
     allow-bean-definition-overriding: true
+  cloud:
+    openfeign:
+      okhttp:
+        enabled: true
 
 management:
   tracing:
@@ -32,3 +36,10 @@ management:
   health:
     elasticsearch:
       enabled: false
+
+
+feign:
+  client:
+    config:
+      location-client:
+        logger-level: FULL

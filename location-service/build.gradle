@@ -39,6 +39,7 @@ ext {
 	set('springBootAdminVersion', "3.1.5")
 	set('springCloudVersion', "2022.0.4")
 	set('springGrpcVersion', "2.15.0.RELEASE")
+	set('feignOkHttpVersion', "13.1")
 	set('grpcVersion', "1.59.0")
 	set('protobufVersion', "3.25.0")
 	set('annotationsApiVersion', "6.0.53")
@@ -64,6 +65,8 @@ dependencies {
 
 	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+	implementation "io.github.openfeign:feign-core:${feignOkHttpVersion}"
+	implementation "io.github.openfeign:feign-okhttp:${feignOkHttpVersion}"
 
 	implementation 'de.codecentric:spring-boot-admin-starter-client'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'

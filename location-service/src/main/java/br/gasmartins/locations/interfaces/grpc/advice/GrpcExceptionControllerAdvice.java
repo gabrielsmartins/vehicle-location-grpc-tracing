@@ -20,14 +20,15 @@ public class GrpcExceptionControllerAdvice {
         log.error("Error processing request", e);
         var code = Status.Code.INTERNAL;
         var cause = e.getCause();
+        var message = e.getMessage() == null ? String.valueOf(e.getCause()) : e.getMessage();
         var errorDetail = ErrorDetail.newBuilder()
                                      .setErrorCode(code.toStatus().toString())
-                                     .setMessage(e.getMessage() == null ? String.valueOf(e.getCause()) : e.getMessage())
+                                     .setMessage(message)
                                      .putAllMetadata(Map.of("cause", String.valueOf(cause)))
                                      .build();
         var status = com.google.rpc.Status.newBuilder()
                                           .setCode(code.ordinal())
-                                          .setMessage("Internal Server Error")
+                                          .setMessage(message)
                                           .addDetails(Any.pack(errorDetail))
                                           .build();
         return StatusProto.toStatusRuntimeException(status);
