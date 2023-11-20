@@ -54,7 +54,7 @@ public class SpanConfiguration {
     public SpanExportingPredicate actuatorSpanExportingPredicate() {
         return span -> {
             if (span.getTags().get("http.url") != null)  {
-                return span.getTags().get("http.url").startsWith("/actuator");
+                return !span.getTags().get("http.url").startsWith("/actuator");
             }
             return true;
         };

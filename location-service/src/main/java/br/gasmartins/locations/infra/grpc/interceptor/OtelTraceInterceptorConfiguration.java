@@ -1,4 +1,4 @@
-package br.gasmartins.sensors.infra.grpc.interceptor;
+package br.gasmartins.locations.infra.grpc.interceptor;
 
 import io.grpc.ClientInterceptor;
 import io.grpc.ServerInterceptor;
