@@ -39,6 +39,18 @@ After that just run the two application using the command:
 $ ./gradlew bootRun --args='--spring.profiles.active=local'
 ```
 
+You can use postman, grpcurl or other tools like BloomRPC and Insomnia to send requests.
+
+In Postman go to the menu **New** > **gRPC** > **Service Definition** > **Import .proto file** > **Add an import path**
+
+Choose the path `<path_to_the_folder>\vehicle-location-grpc-tracing\sensor-service\src\main\proto`
+
+After that click in **Choose a file**, select the proto file and click on **Import** button
+
+Use the endpoint **localhost:8087** and select the desired method
+
+<img src="assets/postman.png">
+
 # Opentelemetry Collector
 
 The traces are collected by OpenTelemetry Colllector and used in Jaeger and Grafana Tempo
