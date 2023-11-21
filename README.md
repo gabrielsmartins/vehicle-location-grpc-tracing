@@ -8,7 +8,7 @@ This project is an example of using SpringBoot 3 using Grpc and Micrometer Traci
 
 - [SpringBoot 3](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
 - [Spring Cloud OpenFeign](https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/)
-- [SpringBoot Grpc]("https://yidongnan.github.io/grpc-spring-boot-starter/en/")
+- [SpringBoot Grpc](https://yidongnan.github.io/grpc-spring-boot-starter/en/)
 - [Elasticsearch](https://java.testcontainers.org/modules/elasticsearch/)
 - [Testcontainers](https://testcontainers.com/guides/getting-started-with-testcontainers-for-java/)
 - [Micrometer](https://micrometer.io/docs/tracing)
