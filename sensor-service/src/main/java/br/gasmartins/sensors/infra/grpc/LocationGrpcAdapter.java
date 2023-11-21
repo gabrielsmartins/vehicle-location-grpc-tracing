@@ -6,21 +6,18 @@ import br.gasmartins.sensors.domain.Coordinates;
 import br.gasmartins.sensors.domain.Location;
 import br.gasmartins.sensors.infra.grpc.mapper.CoordinatesGrpcAdapterMapper;
 import br.gasmartins.sensors.infra.grpc.mapper.LocationGrpcAdapterMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.stereotype.Service;
 
 import static net.logstash.logback.marker.Markers.append;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class LocationGrpcAdapter implements LocationQuery {
 
-    private LocationServiceGrpc.LocationServiceBlockingStub stub;
-
-    public LocationGrpcAdapter(@GrpcClient("location-client") LocationServiceGrpc.LocationServiceBlockingStub stub) { // @GrpcClient is duplicated because of unit tests
-        this.stub = stub;
-    }
+    private final LocationServiceGrpc.LocationServiceBlockingStub stub;
 
     @Override
     public Location findByCoordinates(Coordinates coordinates) {
