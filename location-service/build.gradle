@@ -18,7 +18,7 @@ plugins {
 	id 'eclipse'
 }
 
-group = 'br.gasmartins.sensors'
+group = 'br.gasmartins.locations'
 version = '0.0.1-SNAPSHOT'
 
 java {
@@ -112,7 +112,6 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
 
-	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	testImplementation 'io.grpc:grpc-testing'
 	testImplementation "org.instancio:instancio-junit:${instancioVersion}"
 }
