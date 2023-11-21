@@ -21,7 +21,7 @@ This project is an example of using SpringBoot 3 using Grpc and Micrometer Traci
 > The architecture was based on the explanation of the ideas in the book <a href="https://www.amazon.com/Practical-Domain-Driven-Design-Enterprise-Java/dp/1484245423">**Practical Domain-Driven Design in Enterprise Java Using Jakarta EE, Eclipse MicroProfile, Spring Boot, and the Axon Framework**</a> by **Vijay Nair**
 
 <p align="center">
-<img src="assets/book.png" width="400" height="600">
+<img src="assets/book.png" width="250" height="400">
 </p>
 
 # Getting Started
@@ -38,6 +38,18 @@ After that just run the two application using the command:
 ```bash
 $ ./gradlew bootRun --args='--spring.profiles.active=local'
 ```
+
+You can use postman, grpcurl or other tools like BloomRPC and Insomnia to send requests.
+
+In Postman go to the menu **New** > **gRPC** > **Service Definition** > **Import .proto file** > **Add an import path**
+
+Choose the path `<path_to_the_folder>\vehicle-location-grpc-tracing\sensor-service\src\main\proto`
+
+After that click in **Choose a file**, select the proto file and click on **Import** button
+
+Use the endpoint **localhost:8087** and select the desired method
+
+<img src="assets/postman.png">
 
 # Opentelemetry Collector
 
