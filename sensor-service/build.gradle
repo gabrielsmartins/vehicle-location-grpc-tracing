@@ -130,6 +130,11 @@ dependencyManagement {
 tasks.named('test') {
 	outputs.dir snippetsDir
 	useJUnitPlatform()
+	testLogging {
+		events("passed", "skipped", "failed")
+		showStackTraces = true
+		exceptionFormat = 'full'
+	}
 }
 
 tasks.named('asciidoctor') {
