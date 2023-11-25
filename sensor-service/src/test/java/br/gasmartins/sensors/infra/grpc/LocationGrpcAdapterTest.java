@@ -1,6 +1,7 @@
 package br.gasmartins.sensors.infra.grpc;
 
 import br.gasmartins.sensors.infra.grpc.support.LocationGrpcServiceMock;
+import br.gasmartins.sensors.infra.persistence.support.ElasticsearchContainerSupport;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-class LocationGrpcAdapterTest {
+class LocationGrpcAdapterTest extends ElasticsearchContainerSupport {
 
     private final LocationGrpcAdapter adapter;
     private Server server;
