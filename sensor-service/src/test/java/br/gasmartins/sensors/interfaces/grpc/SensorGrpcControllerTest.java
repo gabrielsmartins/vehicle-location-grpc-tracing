@@ -4,8 +4,8 @@ package br.gasmartins.sensors.interfaces.grpc;
 import br.gasmartins.grpc.sensors.SensorData;
 import br.gasmartins.grpc.sensors.SensorDataPage;
 import br.gasmartins.grpc.sensors.SensorServiceGrpc;
-import br.gasmartins.sensors.interfaces.grpc.advice.GrpcExceptionControllerAdvice;
 import br.gasmartins.sensors.application.service.SensorService;
+import br.gasmartins.sensors.interfaces.grpc.advice.GrpcExceptionControllerAdvice;
 import com.google.protobuf.StringValue;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -31,8 +31,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import static br.gasmartins.sensors.interfaces.grpc.support.SensorDataDtoSupport.*;
 import static br.gasmartins.sensors.domain.support.SensorDataSupport.defaultSensorData;
+import static br.gasmartins.sensors.interfaces.grpc.support.SensorDataDtoSupport.defaultSearchSensorDataByVehicleIdParamDto;
+import static br.gasmartins.sensors.interfaces.grpc.support.SensorDataDtoSupport.defaultSensorDataDto;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.awaitility.Awaitility.await;
@@ -49,7 +50,8 @@ import static org.mockito.Mockito.when;
 })
 @ActiveProfiles("test")
 @ContextConfiguration(initializers = ConfigDataApplicationContextInitializer.class)
-@DirtiesContext
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class SensorGrpcControllerTest {
 
     @MockBean
@@ -59,7 +61,7 @@ class SensorGrpcControllerTest {
     private SensorServiceGrpc.SensorServiceBlockingStub blockingStub;
     private SensorServiceGrpc.SensorServiceStub stub;
 
-    @BeforeEach
+    @BeforeAll
     public void setup() {
         this.channel = ManagedChannelBuilder.forAddress("localhost", 8087)
                 .usePlaintext()
@@ -68,7 +70,7 @@ class SensorGrpcControllerTest {
         this.stub = SensorServiceGrpc.newStub(this.channel);
     }
 
-    @AfterEach
+    @AfterAll
     public void tearDown() {
         this.channel.shutdown();
     }

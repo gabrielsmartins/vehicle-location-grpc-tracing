@@ -1,13 +1,11 @@
 package br.gasmartins.sensors.infra.grpc;
 
 import br.gasmartins.sensors.infra.grpc.support.LocationGrpcServiceMock;
+import br.gasmartins.sensors.infra.persistence.support.ElasticsearchContainerSupport;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,13 +22,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @ActiveProfiles("test")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@DirtiesContext
-class LocationGrpcAdapterTest {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+class LocationGrpcAdapterTest extends ElasticsearchContainerSupport {
 
     private final LocationGrpcAdapter adapter;
     private Server server;
 
-    @BeforeEach
+    @BeforeAll
     public void setup() throws IOException {
         this.server = ServerBuilder.forPort(8085)
                                    .addService(new LocationGrpcServiceMock())
@@ -47,7 +46,7 @@ class LocationGrpcAdapterTest {
         serverThread.start();
     }
 
-    @AfterEach
+    @AfterAll
     public void afterEach() {
         this.server.shutdownNow();
     }

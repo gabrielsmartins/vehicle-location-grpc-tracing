@@ -2,9 +2,9 @@ package br.gasmartins.sensors.interfaces.grpc.advice;
 
 import br.gasmartins.grpc.sensors.SensorData;
 import br.gasmartins.grpc.sensors.SensorServiceGrpc;
-import br.gasmartins.sensors.interfaces.grpc.SensorGrpcController;
-import br.gasmartins.sensors.domain.exceptions.SensorNotFoundException;
 import br.gasmartins.sensors.application.service.SensorService;
+import br.gasmartins.sensors.domain.exceptions.SensorNotFoundException;
+import br.gasmartins.sensors.interfaces.grpc.SensorGrpcController;
 import com.google.protobuf.StringValue;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -15,10 +15,7 @@ import net.devh.boot.grpc.server.autoconfigure.GrpcAdviceAutoConfiguration;
 import net.devh.boot.grpc.server.autoconfigure.GrpcReflectionServiceAutoConfiguration;
 import net.devh.boot.grpc.server.autoconfigure.GrpcServerAutoConfiguration;
 import net.devh.boot.grpc.server.autoconfigure.GrpcServerFactoryAutoConfiguration;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
@@ -49,7 +46,8 @@ import static org.mockito.Mockito.when;
 })
 @ActiveProfiles("test")
 @ContextConfiguration(initializers = ConfigDataApplicationContextInitializer.class)
-@DirtiesContext
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class GrpcExceptionControllerAdviceTest {
 
     @MockBean
@@ -59,7 +57,7 @@ class GrpcExceptionControllerAdviceTest {
     private SensorServiceGrpc.SensorServiceBlockingStub blockingStub;
     private SensorServiceGrpc.SensorServiceStub stub;
 
-    @BeforeEach
+    @BeforeAll
     public void setup() {
         this.channel = ManagedChannelBuilder.forAddress("localhost", 8087)
                                             .usePlaintext()
@@ -68,7 +66,7 @@ class GrpcExceptionControllerAdviceTest {
         this.stub = SensorServiceGrpc.newStub(this.channel);
     }
 
-    @AfterEach
+    @AfterAll
     public void tearDown() {
         this.channel.shutdown();
     }
