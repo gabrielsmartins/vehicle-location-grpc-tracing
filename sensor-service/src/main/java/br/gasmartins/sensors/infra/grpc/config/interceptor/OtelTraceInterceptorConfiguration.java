@@ -2,8 +2,9 @@ package br.gasmartins.sensors.infra.grpc.config.interceptor;
 
 import io.grpc.ClientInterceptor;
 import io.grpc.ServerInterceptor;
-import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.instrumentation.grpc.v1_6.GrpcTelemetry;
+import io.micrometer.core.instrument.binder.grpc.ObservationGrpcClientInterceptor;
+import io.micrometer.core.instrument.binder.grpc.ObservationGrpcServerInterceptor;
+import io.micrometer.observation.ObservationRegistry;
 import net.devh.boot.grpc.client.interceptor.GrpcGlobalClientInterceptor;
 import net.devh.boot.grpc.common.util.InterceptorOrder;
 import net.devh.boot.grpc.server.interceptor.GrpcGlobalServerInterceptor;
@@ -16,15 +17,16 @@ public class OtelTraceInterceptorConfiguration {
 
     @Bean
     @GrpcGlobalServerInterceptor
-    @Order(InterceptorOrder.ORDER_TRACING_METRICS + 1)
-    public ServerInterceptor serverInterceptor(OpenTelemetry openTelemetry) {
-        return GrpcTelemetry.create(openTelemetry).newServerInterceptor();
+    @Order(InterceptorOrder.ORDER_GLOBAL_EXCEPTION_HANDLING)
+    public ServerInterceptor serverInterceptor(ObservationRegistry observationRegistry) {
+        return new ObservationGrpcServerInterceptor(observationRegistry);
     }
 
     @Bean
     @GrpcGlobalClientInterceptor
-    public ClientInterceptor clientInterceptor(OpenTelemetry openTelemetry) {
-        return GrpcTelemetry.create(openTelemetry).newClientInterceptor();
+        @Order(InterceptorOrder.ORDER_TRACING_METRICS)
+    public ClientInterceptor clientInterceptor(ObservationRegistry observationRegistry) {
+        return new ObservationGrpcClientInterceptor(observationRegistry);
     }
 
 }
