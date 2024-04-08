@@ -57,9 +57,6 @@ management:
         http:
           server:
             requests: true
-  health:
-    elasticsearch:
-      enabled: false
 
 
 feign:
