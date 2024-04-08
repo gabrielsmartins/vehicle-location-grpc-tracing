@@ -1,16 +1,25 @@
 package br.gasmartins.sensors.infra.grpc;
 
+import br.gasmartins.sensors.infra.grpc.config.client.LocationGrpcClientConfiguration;
 import br.gasmartins.sensors.infra.grpc.support.LocationGrpcServiceMock;
 import br.gasmartins.sensors.infra.persistence.support.ElasticsearchContainerSupport;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import lombok.RequiredArgsConstructor;
+import net.devh.boot.grpc.client.autoconfigure.GrpcClientAutoConfiguration;
+import net.devh.boot.grpc.server.autoconfigure.GrpcAdviceAutoConfiguration;
+import net.devh.boot.grpc.server.autoconfigure.GrpcReflectionServiceAutoConfiguration;
+import net.devh.boot.grpc.server.autoconfigure.GrpcServerAutoConfiguration;
+import net.devh.boot.grpc.server.autoconfigure.GrpcServerFactoryAutoConfiguration;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
@@ -19,8 +28,16 @@ import static br.gasmartins.sensors.domain.support.CoordinatesSupport.defaultCoo
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
+@Import({LocationGrpcClientConfiguration.class})
+@ImportAutoConfiguration({
+        GrpcReflectionServiceAutoConfiguration.class,
+        GrpcAdviceAutoConfiguration.class,
+        GrpcServerAutoConfiguration.class,
+        GrpcServerFactoryAutoConfiguration.class,
+        GrpcClientAutoConfiguration.class
+})
 @ActiveProfiles("test")
+@ContextConfiguration(initializers = ConfigDataApplicationContextInitializer.class)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)

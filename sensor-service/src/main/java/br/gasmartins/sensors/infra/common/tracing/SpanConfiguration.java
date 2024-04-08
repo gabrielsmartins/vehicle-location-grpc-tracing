@@ -56,6 +56,9 @@ public class SpanConfiguration {
             if (span.getTags().get("http.url") != null)  {
                 return !span.getTags().get("http.url").startsWith("/actuator");
             }
+            if (span.getTags().get("rpc.service") != null)  {
+                return !span.getTags().get("rpc.service").startsWith("grpc.health.v1.Health");
+            }
             return true;
         };
     }

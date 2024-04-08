@@ -28,8 +28,30 @@ management:
   endpoints:
     web:
       exposure:
-        include: '*'
+        include:
+          - health
+          - info
+          - metrics
+          - prometheus
+  endpoint:
+    health:
+      enabled: true
+      probes:
+        enabled: true
+      show-details: always
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
   metrics:
+    tags:
+      application: ${spring.application.name}
+    enable:
+      jvm: true
     distribution:
       percentiles-histogram:
         http:
