@@ -58,8 +58,3 @@ management:
   health:
     elasticsearch:
       enabled: false
-
-
-endpoints:
-  payment:
-    url: htt://payment.xpto.com
